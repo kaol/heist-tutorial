@@ -1,7 +1,7 @@
 Name:                heist-tutorial
 Version:             0.1
-Synopsis:            examples for Heist tutorial
-Description:         Project Description Here
+Synopsis:            Heist tutorial
+Description:         examples for Heist tutorial
 License:             BSD3
 Author:              Kari Pahula
 Maintainer:          kaol@iki.fi
@@ -9,10 +9,6 @@ Stability:           Experimental
 Category:            Web
 Build-type:          Simple
 Cabal-version:       >=1.2
-
-Flag development
-  Description: Whether to build the server in development (interpreted) mode
-  Default: False
 
 Flag old-base
   default: False
@@ -24,7 +20,7 @@ Executable tutorial
 
   Build-depends:
     bytestring                >= 0.9.1   && < 0.11,
-    heist                     == 1.0.*,
+    heist                     >= 1.0     && < 1.1,
     MonadCatchIO-transformers >= 0.2.1   && < 0.4,
     mtl                       >= 2       && < 3,
     transformers              >= 0.3     && < 0.5,
@@ -50,12 +46,3 @@ Executable tutorial
     build-depends:
       base                      >= 4.4      && < 5,
       lens                      >= 3.7.6    && < 4.14
-
-  if flag(development)
-    build-depends:
-      snap-loader-dynamic == 0.10.*
-    cpp-options: -DDEVELOPMENT
-    -- In development mode, speed is already going to suffer, so skip
-    -- the fancy optimization flags.  Additionally, disable all
-    -- warnings.  The hint library doesn't give an option to execute
-    -- compiled code when there were also warnings, so disabling
