@@ -593,6 +593,34 @@ Note that this is nothing that couldn't be done by having a splice
 generate each option tag itself.  It's up to you to use either based
 on what feels most natural for the situation.
 
+### Resolving attribute splices manually
+
+The final attribute related functions are:
+
+```haskell
+runAttributes :: Monad n => [(Text, Text)] -> HeistT n IO [DList (Chunk n)]
+runAttributesRaw :: Monad n => [(Text, Text)] -> HeistT n IO (RuntimeSplice n [(Text, Text)]
+```
+
+These can be used to trigger resolution of attribute splices manually.
+Internally in Heist `compileNode` uses `runAttributes` to turn a
+`Node`'s attributes to the chunks representing `key="value"` pairs of
+a node's attributes.  This is a pretty opaque form for them and you
+can't do much with it beyond outputting them.  The `runAttributesRaw`
+version is likely to be the more useful of the two.
+
+You'll most likely get the attribute values to give to these functions
+by using `getParamNode`.
+
+```haskell
+getParamAttrs :: Monad m => HeistT n m [(Text, Text)]
+getParamAttrs = elementAttrs <$> getParamNode
+```
+
+These two functions are unlikely to see any use in your program, but
+they're there to perform an operation that's otherwise hidden, if you
+ever needed it.
+
 ## Caution about other tutorials and interpreted Heist
 
 Interpreted Heist predates compiled Heist.  As such, there may be
