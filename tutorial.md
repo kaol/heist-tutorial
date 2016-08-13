@@ -1,7 +1,7 @@
 # The Heist tutorial I wish I'd had when I started
 
-I felt that compiled Heist warranted a new tutorial, as what
-information there is seems pretty fragmented.  At least it's not [yet
+I felt that compiled Heist warranted a new tutorial, as the
+information available seems pretty fragmented.  At least it's not [yet
 another monad
 tutorial](https://wiki.haskell.org/Monad_tutorials_timeline) though
 you'll need to know about monads.  I'll be trying to convey a way to
@@ -54,7 +54,7 @@ Functions used in `example1`: `runChildren`, `yieldPureText`.
 
 Compiled Heist separates templating code into two different realms,
 load time and runtime.  The separation is enforced by using `Splice`
-and `RuntimeSplice` monads.  `Splice` is a computation that returns a
+and `RuntimeSplice` types.  `Splice` is a computation that returns a
 list of chunks (more on that later).  `RuntimeSplice` is a monad for
 runtime splice execution.  A monad can be thought of in many ways but
 thinking of them as things that facilitate actions, or computations,
@@ -64,9 +64,10 @@ functions for managing the interaction between these two.
 This might remind you of Template Haskell, though Heist doesn't make
 use of that for this.  What it does is to compile (as in, transform,
 not as in "invoke GHC") all the templates at load time to actions of
-`RuntimeSplice` type.  It's not type safety per se, but it still
-allows for writing for checks for templates that trigger at program
-startup time instead of having them as run time errors.
+`RuntimeSplice` type and chunks of static content.  It's not type
+safety per se, but it still allows for writing for checks for
+templates that trigger at program startup time instead of having them
+as run time errors.
 
 Another point is that moving logic to load time makes compiled Heist
 perform faster than interpreted Heist, which only has runtime to
@@ -189,12 +190,12 @@ app ex = makeSnaplet "tutorial" "Heist tutorial" Nothing $ do
   addConfig h $ mempty .~ scCompiledSplices tutorialSplices
   return $ App h
 
-tutorialSplices :: Splices (Splice (Handler App App))
+tutorialSplices :: Splices (Splice AppHandler)
 tutorialSplices = do
   "foo" ## return $ yieldPureText "hello world"
   "bar" ## barImpl
 
-barImpl :: Splice (Handler App App)
+barImpl :: Splice AppHandler
 barImpl = undefined  -- to be continued
 ```
 
@@ -204,8 +205,8 @@ application snaplet initializer.  Splices are defined with
 to set compiled splices to an empty splice config.  Splice config is a
 monoid to allow this kind of an operation.  If you haven't seen lens
 before, I would suggest to not worry about their use overly much.  The
-type theory behind them gets difficult fast but they are
-straighforward to use in practice.
+theory behind them gets difficult fast but they are straightforward to
+use in practice.
 
 `tutorialSplices` defines the splices, in this example two of them.
 The `##` operator is from
@@ -227,12 +228,12 @@ Functions used in `example2`: `pureSplice`, `textSplice`,
 `manyWithSplices`, `runChildren`, `yieldRuntimeText`, `deferMap`,
 `deferMany`.
 
-We'll have a further look on these later on these functions later on.
+We'll have a further look at these functions later on.
 
 ## Pure splice functions
 
 Let's have a closer look at some of the functions which concern
-`Builder` values.  See `example3` for a program demonstrating these
+`Builder` values.  See `example1` for a program demonstrating these
 functions' use.
 
 ```haskell
@@ -246,10 +247,10 @@ yieldPure :: Builder -> DList (Chunk n)
 
 Recall that `Builder`, as a type, concerns runtime output.  The
 three<sup>[1](#myfootnote1)</sup> fooSplice functions can see use
-inside a function like `yieldRuntime` or with pureSplice or yieldPure.
-They all take a function that turns an input `a` into a value type and
-something of type `a`.  For simplicity's sake, I'll use `textSplice`
-as the example for this section.
+inside a function like `yieldRuntime` or with `pureSplice` or
+`yieldPure`.  They all take a function that turns an input `a` into a
+value type and something of type `a`.  For simplicity's sake, I'll use
+`textSplice` as the example for this section.
 
 `pureSplice` is typically used along with `textSplice` to make a
 function that turns runtime values to `Text` and then to splices.
@@ -628,9 +629,9 @@ material around which talks about interpreted Heist's features without
 specifying that it may be missing or in a different form in compiled
 Heist.
 
-One particular point I'd like to warn is `bind` tag.  It comes as
-default in interpreted Heist but no such construct comes with compiled
-Heist.  Likewise for `apply-content` and `apply`.
+One particular point I'd like to warn about is `bind` tag.  It comes
+as default in interpreted Heist but no such construct comes with
+compiled Heist.  Likewise for `apply-content` and `apply`.
 
 Code which may mix interpreted and compiled Heist typically uses
 qualified imports `I` and `C`, respectively.  This tutorial only uses
