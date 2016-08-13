@@ -6,9 +6,11 @@ import Heist
 import Snap.Snaplet.Heist
 import Snap
 import Heist.Compiled
+import Data.Text (Text)
 
 data App = App
   { _heist :: Snaplet (Heist App)
+  , _appData :: Text
   }
 
 makeLenses ''App

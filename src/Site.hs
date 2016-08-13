@@ -22,4 +22,4 @@ app ex = makeSnaplet "tutorial" "Heist tutorial" Nothing $ do
   h <- nestSnaplet "" heist $ heistInit' (examplePath ex) emptyHeistConfig
   addConfig h $ mempty & scCompiledSplices .~ (exampleSplices ex)
   wrapSite (<|> heistServe)
-  return $ App h
+  return $ App h "green"

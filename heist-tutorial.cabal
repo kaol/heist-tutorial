@@ -36,7 +36,9 @@ Executable tutorial
     time                      >= 1.1     && < 1.6,
     xmlhtml                   >= 0.1     && < 0.3,
     containers                >= 0.5     && < 0.6,
-    map-syntax                >= 0.2     && < 0.3                        
+    map-syntax                >= 0.2     && < 0.3,
+    http-types                >= 0.9     && < 0.10,
+    blaze-builder             >= 0.4     && < 0.5
 
   if flag(old-base)
     build-depends:
