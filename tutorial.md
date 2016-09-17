@@ -600,7 +600,7 @@ The final attribute related functions are:
 
 ```haskell
 runAttributes :: Monad n => [(Text, Text)] -> HeistT n IO [DList (Chunk n)]
-runAttributesRaw :: Monad n => [(Text, Text)] -> HeistT n IO (RuntimeSplice n [(Text, Text)]
+runAttributesRaw :: Monad n => [(Text, Text)] -> HeistT n IO (RuntimeSplice n [(Text, Text)])
 ```
 
 These can be used to trigger resolution of attribute splices manually.
