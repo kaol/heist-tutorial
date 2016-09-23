@@ -667,10 +667,11 @@ material around which talks about interpreted Heist's features without
 specifying that it may be missing or in a different form in compiled
 Heist.
 
-One particular point I'd like to warn about is `bind` tag.  It comes
-as default in interpreted Heist but no such construct comes with
-compiled Heist.  Likewise for `apply-content` and `apply`.  But those
-last two can be defined and used with compiled Heist, see `example4`.
+It is possible to use interpreted and compiled modes together, with
+`hcLoadTimeSplices`.  However, this tutorial is about using pure
+compiled Heist.  You won't have splices like `bind`, `apply` or
+`apply-content` with that.  However, for an example of how to define
+the last two of those with compiled Heist, see `example4`.
 
 Code which may mix interpreted and compiled Heist typically uses
 qualified imports `I` and `C`, respectively.  This tutorial only uses
