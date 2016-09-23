@@ -4,6 +4,7 @@ module Tutorial.Examples
        , example1
        , example2
        , example3
+       , example4
        ) where
 
 {-
@@ -14,6 +15,7 @@ Example files.
 import Tutorial.Example1
 import Tutorial.Example2
 import Tutorial.Example3
+import Tutorial.Example4
 import Site
 
 import Snap.Snaplet
@@ -27,6 +29,7 @@ allExamples =
   [ example1Data
   , example2Data
   , example3Data
+  , example4Data
   ]
 
 launchExample :: Example -> IO ()
@@ -44,3 +47,6 @@ example2 = launchExample example2Data
 
 example3 :: IO ()
 example3 = launchExample example3Data
+
+example4 :: IO ()
+example4 = launchExample example4Data

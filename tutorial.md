@@ -669,7 +669,8 @@ Heist.
 
 One particular point I'd like to warn about is `bind` tag.  It comes
 as default in interpreted Heist but no such construct comes with
-compiled Heist.  Likewise for `apply-content` and `apply`.
+compiled Heist.  Likewise for `apply-content` and `apply`.  But those
+last two can be defined and used with compiled Heist, see `example4`.
 
 Code which may mix interpreted and compiled Heist typically uses
 qualified imports `I` and `C`, respectively.  This tutorial only uses
