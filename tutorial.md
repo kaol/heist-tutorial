@@ -172,7 +172,7 @@ Speaking of plural splices may often refer to the map of splices in
 use.  That's how the Heist documentation ends up with phrases like
 
 > Runs a splice, but first binds splices given by splice functions that
-> need some runtime data."
+> need some runtime data.
 
 That is, run a collection of Chunks, first manipulating the map of
 recognized splices by using functions that take some runtime data and
