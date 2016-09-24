@@ -11,9 +11,8 @@ compiled Heist.
 Heist is an HTML or XML templating library.  It comes as default with
 Snap Haskell web framework and I'll cover using Heist in that context.
 
-I won't be talking about interpreted Heist.  I don't personally see
-any reason for using it and this tutorial assumes no familiarity with
-it.
+I won't be talking about interpreted Heist and this tutorial assumes
+no familiarity with it.
 
 On a high level, Heist allows writing templates using plain HTML and
 XML and mixing in splices in there.  Splices are mapped to Haskell
@@ -667,11 +666,12 @@ material around which talks about interpreted Heist's features without
 specifying that it may be missing or in a different form in compiled
 Heist.
 
-It is possible to use interpreted and compiled modes together, with
-`hcLoadTimeSplices`.  However, this tutorial is about using pure
-compiled Heist.  You won't have splices like `bind`, `apply` or
-`apply-content` with that.  However, for an example of how to define
-the last two of those with compiled Heist, see `example4`.
+You may see them use splices such as `bind`, `apply` and
+`apply-content`.  If you are using only compiled Heist you won't have
+those available.  I'm not covering mixed use in this tutorial but see
+`hcLoadTimeSplices` should you have an interest in that.  For an
+example of how to define `apply` and `apply-content` for compiled
+Heist, see `example4`.
 
 Code which may mix interpreted and compiled Heist typically uses
 qualified imports `I` and `C`, respectively.  This tutorial only uses
