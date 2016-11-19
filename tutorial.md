@@ -108,9 +108,13 @@ other templates, which requires `IO` for it and you'll have access to
 `liftIO` in your splice code.
 
 `n` is your runtime monad.  If you are using Heist with Snap then this
-will most likely be like `AppHandler`, but it could be anything else,
-like `State m`.  The `Chunk` in the return type has access to this
-type.
+will most likely be like `Handler App App` (or even more likely a type
+alias via `type AppHandler = Handler App App`), but it could be
+anything else, like `State m`.  The `Chunk` in the return type has
+access to this type.
+
+GHC will give you a `HeistT` in any type error messages instead of a
+`Splice` so you should keep in mind that it's about the latter.
 
 ```haskell
 newtype RuntimeSplice m a
@@ -359,7 +363,9 @@ greeterIOSplice = do
 ```haskell
 withSplices :: Monad n => Splice n -> Splices (RuntimeSplice n a -> Splice n) -> RuntimeSplice n a -> Splice n
 
-manyWithSplices :: Monad n => Splice n -> Splices (RuntimeSplice n a -> Splice n) -> RuntimeSplice n [a] -> Splice n
+manyWithSplices :: (Foldable f, Monad n) => Splice n -> Splices (RuntimeSplice n a -> Splice n) -> RuntimeSplice n (f a) -> Splice n
+
+manyWith :: (Foldable f, Monad n) => Splice n -> Splices (RuntimeSplice n a -> Splice n) -> Splices (RuntimeSplice n a -> AttrSplice n) -> RuntimeSplice n (f a) -> Splice n
 
 withLocalSplices :: Splices (Splice n) -> Splices (AttrSplice n) -> HeistT n IO a -> HeistT n IO a
 ```
@@ -377,6 +383,9 @@ the yield family of functions.  If you fall into thinking of things
 imperatively, you may be concerned about the upper level splices
 getting a different runtime data when used in splices across a
 `withSplices`.  But that's not what's going on with it.
+
+The `manyWith` function is a version of `manyWithSplices` which also
+takes attribute splices.  We'll return to those later on.
 
 The `withLocalSplices` function is a bit lower level version of the
 same, which doesn't concern itself with the runtime data.  Recall that
@@ -422,9 +431,6 @@ simpleTextSplices' = mapV (pureSplice . textSplice) $ do
 ## Functions manipulating runtime splices
 
 We already saw this group of functions in action in `example2`.
-
-<i>Note: as of this writing, `defer` has not yet made it to a Heist
-release.  It's easy to define yourself: `defer = deferMap return`.</i>
 
 ```haskell
 defer :: Monad n => (RuntimeSplice n a -> Splice n) -> RuntimeSplice n a -> Splice n
@@ -658,6 +664,32 @@ getParamAttrs = elementAttrs <$> getParamNode
 These two functions are unlikely to see any use in your program, but
 they're there to perform an operation that's otherwise hidden, if you
 ever needed it.
+
+## Types, simplified with an alias
+
+By now, you may have noted a repetitive pattern in the type
+definitions: `RuntimeSplice n a -> Splice n`.  As stated previously,
+`n` is the runtime type, which typically is `Handler App App` (or
+`AppHandler`) when used with Snap.  It should be instructive to make
+one further type alias and see what the relevant Heist functions'
+types look like when written in terms of that.
+
+```haskell
+type RuntimeAppHandler a = RuntimeSplice AppHandler a -> Splice AppHandler
+
+deferMany :: (Foldable f, Monad n) => RuntimeAppHandler a -> RuntimeSplice n (f a) -> Splice n
+defer :: Monad n => RuntimeAppHandler a -> RuntimeAppHandler a
+deferMap :: Monad n => (a -> RuntimeSplice n b) -> RuntimeAppHandler a -> RuntimeAppHandler a
+mayDeferMap :: Monad n => (a -> RuntimeSplice n (Maybe b)) -> RuntimeAppHandler a -> RuntimeAppHandler a
+bindLater :: Monad n => (a -> RuntimeSplice n Builder) -> RuntimeAppHandler a
+withSplices :: Monad n => Splice n -> Splices (RuntimeAppHandler a) -> RuntimeAppHandler a
+manyWithSplices :: (Foldable f, Monad n) => Splice n -> Splices (RuntimeAppHandler a) -> RuntimeSplice n (f a) -> Splice n
+manyWith :: (Foldable f, Monad n) => Splice n -> Splices (RuntimeAppHandler a) -> Splices (RuntimeSplice n a -> AttrSplice n) -> RuntimeSplice n (f a) -> Splice n
+```
+
+As far as naming goes, I'm not sure whether "RuntimeAppHandler" is a
+good one for this synonym.  I've coined it for this tutorial but I'm
+open for suggestions for a more descriptive one.
 
 ## Caution about other tutorials and interpreted Heist
 

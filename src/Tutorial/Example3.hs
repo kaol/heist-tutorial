@@ -28,8 +28,6 @@ example3Data = Example "example3" mainSplices
 -- Top level splices definition
 mainSplices :: Splices (Splice AppHandler)
 mainSplices = do
-  -- Workaround for a bug in Heist 1.0
-  "relax" ## return $ yieldPure mempty
   -- Simple as it gets
   "simple" ## return $ yieldPureText "hello"
   -- URL escaping for a path and query, combined

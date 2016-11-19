@@ -24,4 +24,3 @@
     </h:attrspliceruntime>
   </body>
 </html>
-<h:relax/>
